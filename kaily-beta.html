@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAILY – Epilepsie-Begleiter für Familien</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple: #7C3AED;
+    --purple-light: #A78BFA;
+    --purple-glow: rgba(124,58,237,0.22);
+    --night: #080611;
+    --night-2: #0F0A1A;
+    --night-3: #170F28;
+    --text: #F0EBFF;
+    --text-muted: #9D8DB8;
+    --accent: #C084FC;
+    --green: #4ADE80;
+    --heart: #F472B6;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--night);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.65;
+  }
+
+  /* AMBIENT BACKGROUND */
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-layer::before {
+    content: '';
+    position: absolute;
+    width: 900px; height: 900px;
+    background: radial-gradient(circle, rgba(124,58,237,0.13) 0%, transparent 65%);
+    top: -200px; left: 50%;
+    transform: translateX(-50%);
+    animation: breathe 6s ease-in-out infinite;
+  }
+  .bg-layer::after {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(192,132,252,0.07) 0%, transparent 65%);
+    bottom: 10%; right: -100px;
+    animation: breathe 8s ease-in-out infinite reverse;
+  }
+  @keyframes breathe {
+    0%,100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.06); }
+  }
+
+  /* STARS */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--d, 3s) ease-in-out infinite var(--delay, 0s);
+  }
+  @keyframes twinkle {
+    0%,100% { opacity: 0.1; }
+    50% { opacity: 0.6; }
+  }
+
+  main { position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 5rem 1.5rem 4rem;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(74,222,128,0.1);
+    border: 1px solid rgba(74,222,128,0.3);
+    color: var(--green);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.4rem 1.1rem;
+    border-radius: 100px;
+    margin-bottom: 2.5rem;
+    animation: fadeDown 0.7s ease both;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(3rem, 10vw, 6.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    animation: fadeDown 0.7s 0.1s ease both;
+  }
+  h1 span {
+    background: linear-gradient(135deg, #C084FC, #818CF8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tagline {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+    animation: fadeDown 0.7s 0.2s ease both;
+  }
+
+  .hero-text {
+    max-width: 620px;
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    animation: fadeDown 0.7s 0.3s ease both;
+  }
+  .hero-text strong { color: var(--text); font-weight: 500; }
+
+  .cta-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeDown 0.7s 0.4s ease both;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #7C3AED, #6D28D9);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 1rem 2.5rem;
+    border-radius: 100px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 40px rgba(124,58,237,0.4), 0 4px 20px rgba(0,0,0,0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    pointer-events: none;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 60px rgba(124,58,237,0.6), 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-icon { font-size: 1.3rem; }
+
+  .cta-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+  .cta-note a { color: var(--accent); text-decoration: none; }
+
+  /* DIVIDER */
+  .divider {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(124,58,237,0.4), transparent);
+  }
+
+  /* STORY SECTION */
+  .story {
+    padding: 6rem 1.5rem;
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+
+  .story h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    color: var(--text);
+  }
+
+  .story-paragraphs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .story-paragraphs p {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    line-height: 1.85;
+  }
+  .story-paragraphs p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  blockquote {
+    border-left: 3px solid var(--purple-light);
+    padding: 1.2rem 1.5rem;
+    margin: 2rem 0;
+    text-align: left;
+    background: rgba(124,58,237,0.06);
+    border-radius: 0 12px 12px 0;
+  }
+  blockquote p {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: 1.2rem !important;
+    color: var(--text) !important;
+    line-height: 1.6 !important;
+  }
+
+  /* FEATURES */
+  .features {
+    padding: 5rem 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .features-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .features-header h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin-top: 0.75rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .feature-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .feature-card:hover {
+    background: rgba(124,58,237,0.08);
+    border-color: rgba(124,58,237,0.3);
+    transform: translateY(-2px);
+  }
+
+  .feature-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .feature-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: var(--text);
+  }
+  .feature-card p {
+    font-size: 0.87rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* WHO */
+  .who {
+    padding: 5rem 1.5rem;
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .who h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin: 0.75rem 0 2rem;
+  }
+
+  .who-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: left;
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+  }
+  .who-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    font-size: 1rem;
+    color: var(--text-muted);
+  }
+  .who-item .ic {
+    font-size: 1.1rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+  }
+  .who-item strong { color: var(--text); font-weight: 500; }
+
+  /* BOTTOM CTA */
+  .bottom-cta {
+    padding: 7rem 1.5rem;
+    text-align: center;
+    position: relative;
+  }
+  .bottom-cta::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .bottom-cta h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 6vw, 4rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .bottom-cta p {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    margin-bottom: 3rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+  }
+
+  .heart { color: var(--heart); }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem 1.5rem;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ANIMATIONS */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .btn-primary { padding: 0.9rem 2rem; font-size: 0.95rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="stars" id="stars"></div>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge"><span class="badge-dot"></span> Android Beta – jetzt verfügbar</div>
+
+    <h1>KAILY<br><span>für Familien</span></h1>
+    <p class="tagline">Weil kein Elternteil nachts Zettel zählen sollte.</p>
+
+    <p class="hero-text">
+      Ein Epilepsie-Begleiter, entstanden aus <strong>gelebter Erfahrung</strong> —
+      nicht aus einem Büro. Anfallstagebuch, Medikamenten-Manager, SOS-Alarm,
+      Wear OS. Für Familien in Deutschland, Österreich und der Schweiz.
+    </p>
+
+    <div class="cta-group">
+      <a class="btn-primary" href="https://play.google.com/apps/internaltest/4701083193479350113" target="_blank" rel="noopener">
+        <span class="btn-icon">▶</span>
+        Jetzt Beta testen – Google Play
+      </a>
+      <span class="cta-note">Android · Kostenlos · Offener Beta-Test</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- STORY -->
+  <section class="story">
+    <p class="section-label fade-in">Die Geschichte dahinter</p>
+    <h2 class="fade-in">Ich bin kein Entwickler.<br>Ich bin Großvater.</h2>
+
+    <div class="story-paragraphs">
+      <p class="fade-in">
+        Epilepsie beginnt oft dann, wenn alle anderen schlafen.
+        Die Stille wird laut. Man zählt keine Schritte — man zählt Atemzüge.
+        Die Angst, etwas zu vergessen, schläft mit im Zimmer.
+      </p>
+
+      <blockquote class="fade-in">
+        <p>„Meine Frau ist betroffen. Mein dreijähriger Enkel auch.
+        Ich wollte das bauen, was ich mir damals gewünscht hätte."</p>
+      </blockquote>
+
+      <p class="fade-in">
+        Seit Juni 2025 lerne ich programmieren.
+        <strong>Kein Team. Kein Investor.</strong>
+        Nur die Überzeugung, dass diese App gebraucht wird —
+        und die Erfahrung, die man nur durch das Leben bekommt, nicht durch Studium.
+      </p>
+
+      <p class="fade-in">
+        KAILY steckt mitten in der Entwicklung.
+        Genau deshalb ist jetzt der richtige Zeitpunkt.
+        <strong>Wer früh dabei ist, prägt mit, was sie wird.</strong>
+      </p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <div class="features-header fade-in">
+      <p class="section-label">Was KAILY kann</p>
+      <h2>Alles, was Familien wirklich brauchen.</h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <span class="feature-icon">📔</span>
+        <h3>Anfallstagebuch</h3>
+        <p>Timer, Schweregrad, Trigger, Timeline — alles an einem Ort.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">💊</span>
+        <h3>Medikamenten-Manager</h3>
+        <p>Reminder, Vorrats-Warnung, Nebenwirkungen protokollieren.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">🆘</span>
+        <h3>SOS-Alarm</h3>
+        <p>Manuell, per Leiser-Taste oder Smartwatch. SMS mit Standort an Notfallkontakte.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">📊</span>
+        <h3>Statistik & Verlauf</h3>
+        <p>Woche, Monat, Jahr — Muster erkennen, Arzttermine vorbereiten.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">😴</span>
+        <h3>Schlaf erfassen</h3>
+        <p>Zusammenhänge zwischen Schlaf und Anfällen sichtbar machen.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">🏥</span>
+        <h3>Arzttermine</h3>
+        <p>Termine verwalten, Verläufe exportieren, vorbereitet ins Gespräch gehen.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">🎨</span>
+        <h3>Themes</h3>
+        <p>Für Kinder, Teens & Erwachsene. Die App passt sich an — nicht umgekehrt.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">⌚</span>
+        <h3>Wear OS</h3>
+        <p>SOS direkt von der Smartwatch. Immer dabei, auch wenn das Handy weg ist.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <span class="feature-icon">🔒</span>
+        <h3>Datenschutz</h3>
+        <p>Biometrie, Google Sign-In. Deine Daten gehören dir — und keinem Konzern.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- WHO -->
+  <section class="who">
+    <p class="section-label fade-in">Für wen</p>
+    <h2 class="fade-in">KAILY ist für dich, wenn…</h2>
+
+    <div class="who-list">
+      <div class="who-item fade-in">
+        <span class="ic">💜</span>
+        <span>du oder jemand dem du liebst <strong>von Epilepsie betroffen ist</strong></span>
+      </div>
+      <div class="who-item fade-in">
+        <span class="ic">👨‍👩‍👧</span>
+        <span>du als <strong>Elternteil, Partner oder pflegender Angehöriger</strong> Verantwortung trägst</span>
+      </div>
+      <div class="who-item fade-in">
+        <span class="ic">🌙</span>
+        <span>du weißt, wie es sich anfühlt, <strong>nachts wach zu liegen</strong> und zu hoffen</span>
+      </div>
+      <div class="who-item fade-in">
+        <span class="ic">📝</span>
+        <span>du müde bist von <strong>Zetteln, Excel-Tabellen und vergessenen Details</strong></span>
+      </div>
+      <div class="who-item fade-in">
+        <span class="ic">🇩🇪</span>
+        <span>du in <strong>Deutschland, Österreich oder der Schweiz</strong> lebst</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM CTA -->
+  <section class="bottom-cta">
+    <h2 class="fade-in">Sei dabei.<br>Präge mit, was KAILY wird.</h2>
+    <p class="fade-in">
+      Der Beta-Test ist offen. Kein Formular, keine Warteliste.
+      Einfach auf den Button — und loslegen.
+    </p>
+    <div class="cta-group fade-in">
+      <a class="btn-primary" href="https://play.google.com/apps/internaltest/4701083193479350113" target="_blank" rel="noopener">
+        <span class="btn-icon">▶</span>
+        Jetzt Beta testen – Google Play
+      </a>
+      <span class="cta-note">Android · Kostenlos · 🇩🇪 🇦🇹 🇨🇭</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Gebaut von einem Großvater aus Gifhorn. Mit viel Kaffee und noch mehr Liebe. <span class="heart">💜</span><br><br>
+  Fragen? Schreib direkt auf <a href="https://www.linkedin.com/in/juergenmann-dev" target="_blank">LinkedIn</a> oder per DM.
+</footer>
+
+<script>
+  // Generate stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `
+      left: ${Math.random()*100}%;
+      top: ${Math.random()*100}%;
+      opacity: ${Math.random()*0.4 + 0.05};
+      --d: ${2 + Math.random()*4}s;
+      --delay: ${Math.random()*5}s;
+      width: ${Math.random() > 0.8 ? '3px' : '2px'};
+      height: ${Math.random() > 0.8 ? '3px' : '2px'};
+    `;
+    starsEl.appendChild(s);
+  }
+
+  // Scroll animations
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
